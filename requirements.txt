@@ -1,0 +1,35 @@
+# NEXUS AI — Python dependencies
+# Core backend
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.9.0
+pydantic-settings>=2.6.0
+python-dotenv>=1.0.1
+python-multipart>=0.0.12
+httpx>=0.27.0
+aiofiles>=24.1.0
+sse-starlette>=2.1.0
+slowapi>=0.1.9
+
+# Database
+aiosqlite>=0.20.0
+
+# Document extraction
+pypdf>=5.0.0
+python-docx>=1.1.2
+Pillow>=10.4.0
+
+# Optional local LLM runtimes (install what you need)
+# transformers + torch for HuggingFace models
+# llama-cpp-python for GGUF
+# vllm for high-throughput GPU serving
+# faster-whisper for STT
+# sentence-transformers for local embeddings
+
+# App (Flet)
+flet>=0.25.0
+
+# Dev / tests
+pytest>=8.3.0
+pytest-asyncio>=0.24.0
+pytest-httpx>=0.34.0

@@ -1,0 +1,51 @@
+{
+  "task_patterns": {
+    "coding": [
+      "código", "codigo", "code", "program", "python", "javascript", "typescript",
+      "function", "class ", "bug", "debug", "api", "script", "refactor", "compile",
+      "sql", "regex", "github", "algoritmo", "sdr", "rtl-sdr"
+    ],
+    "math": [
+      "calcule", "equação", "equacao", "integral", "derivada", "álgebra", "algebra",
+      "probabilidade", "estatística", "estatistica", "math", "formula", "matriz"
+    ],
+    "reasoning": [
+      "explique o raciocínio", "analise", "análise", "por que", "porque", "compare",
+      "trade-off", "pros e contras", "deduza", "infer"
+    ],
+    "technical": [
+      "configurar", "instalar", "servidor", "vps", "nginx", "docker", "linux",
+      "rede", "firewall", "systemd", "ssl", "https", "deploy"
+    ],
+    "creative_writing": [
+      "escreva uma história", "poema", "conto", "roteiro", "criativo", "narrativa"
+    ],
+    "translation": [
+      "traduza", "traduzir", "translate", "em inglês", "em portugues", "em português"
+    ],
+    "summarization": [
+      "resuma", "resumo", "sumarize", "summarize", "tl;dr", "pontos principais"
+    ],
+    "document_analysis": [
+      "documento", "pdf", "anexo", "arquivo", "leia este", "analise o texto"
+    ],
+    "research": [
+      "pesquise", "research", "fontes", "estado da arte", "comparativo"
+    ],
+    "vision": [
+      "imagem", "foto", "png", "jpg", "o que tem nesta imagem", "descreva a imagem"
+    ],
+    "voice": [
+      "áudio", "audio", "transcreva", "whisper"
+    ],
+    "long_context": [
+      "contexto longo", "todo o histórico", "documento grande", "muitas páginas"
+    ],
+    "general_chat": []
+  },
+  "complexity_signals": {
+    "high": ["arquitetura", "do zero", "produção", "otimize", "passo a passo detalhado"],
+    "medium": ["como", "explique", "configure", "exemplo"],
+    "low": ["oi", "olá", "hello", "obrigado", "valeu"]
+  }
+}

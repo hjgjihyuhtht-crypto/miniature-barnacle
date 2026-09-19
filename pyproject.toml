@@ -1,0 +1,26 @@
+[project]
+name = "nexus-ai"
+version = "1.0.0"
+description = "NEXUS AI — cliente Android multimodelo (Flet)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "flet>=1.0.0",
+  "httpx>=0.27.0",
+]
+
+[tool.flet]
+org = "com.nexusai"
+product = "NEXUS AI"
+company = "NEXUS AI"
+copyright = "Copyright (C) 2026 NEXUS AI"
+artifact = "nexus-ai"
+
+[tool.flet.app]
+# Project root contains main.py (entrypoint) + app/ package + assets/
+path = "."
+module = "main"
+
+[tool.flet.android]
+# INTERNET is added by Flet by default for network apps
+permissions = ["microphone"]

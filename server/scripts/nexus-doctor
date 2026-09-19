@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# NEXUS AI DOCTOR — real status checks (no secrets printed).
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+# shellcheck disable=SC1091
+[[ -f "$ROOT/.env" ]] && set -a && source "$ROOT/.env" && set +a || true
+
+ok() { printf "%-14s %s\n" "$1" "OK"; }
+bad() { printf "%-14s %s\n" "$1" "FAIL — $2"; }
+info() { printf "%-14s %s\n" "$1" "$2"; }
+
+echo "NEXUS AI DOCTOR"
+echo "==============="
+
+# Prefer project venv Python when present
+PY=python3
+if [[ -x "$ROOT/.venv/bin/python" ]]; then
+  PY="$ROOT/.venv/bin/python"
+  # shellcheck disable=SC1091
+  source "$ROOT/.venv/bin/activate"
+fi
+
+# Python / SOABI
+if command -v "$PY" >/dev/null || [[ -x "$PY" ]]; then
+  SOABI="$("$PY" -c 'import sysconfig; print(sysconfig.get_config_var("SOABI") or "")' 2>/dev/null || true)"
+  if [[ "$SOABI" == *android* ]]; then
+    bad "Python" "Android SOABI ($SOABI) — recreate venv with /usr/bin/python3"
+  else
+    ok "Python"
+    info "SOABI" "$SOABI"
+  fi
+else
+  bad "Python" "not found"
+fi
+
+# FastAPI import
+if "$PY" -c "import fastapi" 2>/dev/null; then ok "FastAPI"; else bad "FastAPI" "pip install -r requirements.txt"; fi
+if "$PY" -c "import torch" 2>/dev/null; then ok "PyTorch"; else info "PyTorch" "not installed (optional)"; fi
+if "$PY" -c "import transformers" 2>/dev/null; then ok "Transformers"; else info "Transformers" "not installed (optional)"; fi
+if "$PY" -c "import llama_cpp" 2>/dev/null; then ok "llama.cpp"; else info "llama.cpp" "not installed (optional)"; fi
+if "$PY" -c "import vllm" 2>/dev/null; then info "vLLM" "installed"; else info "vLLM" "not installed (optional)"; fi
+if "$PY" -c "import faster_whisper" 2>/dev/null; then ok "Whisper"; else info "Whisper" "not installed (optional)"; fi
+
+# Provider keys (presence only — never print values)
+[[ -n "${OPENROUTER_API_KEY:-}" ]] && ok "OpenRouter" || info "OpenRouter" "not set"
+[[ -n "${OPENAI_API_KEY:-}" ]] && ok "OpenAI key" || info "OpenAI key" "not set"
+[[ -n "${GEMINI_API_KEY:-}" ]] && ok "Gemini key" || info "Gemini key" "not set"
+[[ -n "${ANTHROPIC_API_KEY:-}" ]] && ok "Claude key" || info "Claude key" "not set"
+
+LLAMA_PATH="${LLAMA_MODEL_PATH:-/opt/nexus-ai/models/llama}"
+QWEN_PATH="${QWEN_MODEL_PATH:-/opt/nexus-ai/models/qwen}"
+if [[ -d "$LLAMA_PATH" ]] && find "$LLAMA_PATH" -type f | head -1 | grep -q .; then ok "Llama"; else bad "Llama" "missing files in $LLAMA_PATH"; fi
+if [[ -d "$QWEN_PATH" ]] && find "$QWEN_PATH" -type f | head -1 | grep -q .; then ok "Qwen"; else bad "Qwen" "missing files in $QWEN_PATH"; fi
+
+# Memory / DB
+DB_PATH="${NEXUS_DB_PATH:-$ROOT/data/db/nexus.db}"
+if [[ -f "$DB_PATH" ]] || mkdir -p "$(dirname "$DB_PATH")" 2>/dev/null; then ok "Memory"; else bad "Memory" "cannot access db path"; fi
+
+# Resources
+info "CPU" "$(nproc) cores"
+if command -v free >/dev/null; then info "RAM" "$(free -h | awk '/Mem:/{print $2" total, "$7" avail"}')"; fi
+info "Disk" "$(df -h / | awk 'NR==2{print $4" free"}')"
+if command -v nvidia-smi >/dev/null; then info "GPU" "$(nvidia-smi --query-gpu=name --format=csv,noheader | head -1)"; else info "GPU" "none"; fi
+
+# Nginx / HTTPS
+if command -v nginx >/dev/null; then ok "Nginx"; else info "Nginx" "not installed"; fi
+if [[ -f /etc/letsencrypt/live/*/fullchain.pem ]] 2>/dev/null; then ok "HTTPS"; else info "HTTPS" "configure certbot"; fi
+
+# Backend probe
+if curl -fsS "http://127.0.0.1:8000/health" >/dev/null 2>&1; then
+  ok "Backend"
+else
+  info "Backend" "not running on 127.0.0.1:8000"
+fi
+
+echo
+echo "NEXUS AI READY (when Backend + at least one model path are OK)"

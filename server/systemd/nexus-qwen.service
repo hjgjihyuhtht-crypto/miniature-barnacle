@@ -1,0 +1,16 @@
+[Unit]
+Description=NEXUS AI Qwen runtime (optional dedicated process)
+After=network.target
+
+[Service]
+Type=simple
+User=nexus
+Group=nexus
+WorkingDirectory=/opt/nexus-ai
+EnvironmentFile=/opt/nexus-ai/.env
+ExecStart=/bin/true
+RemainAfterExit=yes
+# Models loaded by ModelManager inside FastAPI by default.
+
+[Install]
+WantedBy=multi-user.target

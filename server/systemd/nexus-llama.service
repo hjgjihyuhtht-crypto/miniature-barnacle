@@ -1,0 +1,19 @@
+[Unit]
+Description=NEXUS AI Llama runtime (optional dedicated process)
+After=network.target
+# Prefer ModelManager inside the backend; enable this only for dedicated serving.
+
+[Service]
+Type=simple
+User=nexus
+Group=nexus
+WorkingDirectory=/opt/nexus-ai
+EnvironmentFile=/opt/nexus-ai/.env
+ExecStart=/bin/true
+RemainAfterExit=yes
+# Placeholder: local models are loaded on-demand by backend ModelManager.
+# Replace ExecStart with a dedicated server (e.g. llama-server) if desired,
+# bound ONLY to 127.0.0.1 — never to 0.0.0.0.
+
+[Install]
+WantedBy=multi-user.target

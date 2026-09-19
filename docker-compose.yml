@@ -1,0 +1,20 @@
+services:
+  nexus-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nexus-backend
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./data:/app/data
+      - /opt/nexus-ai/models:/opt/nexus-ai/models:ro
+    restart: unless-stopped
+    # Optional GPU:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - capabilities: [gpu]
