@@ -8,8 +8,8 @@ from typing import Any, Optional
 
 @dataclass
 class AppSettings:
-    server_url: str = "https://seu-dominio.com"
-    api_key: str = ""
+    server_url: str = "http://200.234.207.253:8000/"
+    api_key: str = "dev"
     routing_mode: str = "auto"
     selected_model: str = "auto"
     memory_enabled: bool = True
